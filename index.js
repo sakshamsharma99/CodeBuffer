@@ -9,11 +9,17 @@ const app = express();
 
 app.use(express.json());
 
-app.post("/signup", function(req, res){
+app.post("/signup", async function(req, res){
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
     
+    const existed = await User.findOne({email: email});
+
+    if(existed) {
+        return res.status(409).send("User already exists.");
+    }
+
     const user = new User({
         name : name,
         email : email,
